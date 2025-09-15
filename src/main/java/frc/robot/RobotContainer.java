@@ -17,8 +17,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.lib.tuneables.TuneablesManager;
 import frc.robot.Commands.ShootingCommands;
 import frc.robot.POM_lib.Joysticks.PomXboxController;
 import frc.robot.Subsystems.shoot.Shoot;
@@ -27,8 +25,7 @@ import frc.robot.Commands.DriveCommands;
 import frc.robot.POM_lib.Joysticks.PomXboxController;
 import frc.robot.Subsystems.drive.Drive;
 import frc.robot.Subsystems.drive.DriveIOTalonSRX;
-import frc.robot.Subsystems.
-Transfer.Transfer;
+import frc.robot.Subsystems.Transfer.Transfer;
 import frc.robot.Subsystems.Transfer.TransferIOReal;
 import frc.robot.Subsystems.NoteIntake.NoteIntake;
 import frc.robot.Subsystems.NoteIntake.NoteIntakeIOReal;
@@ -48,35 +45,34 @@ import frc.robot.Commands.NoteIntakeCommands;
  * here.
  */
 public class RobotContainer {
-  
+
   // A chooser for autonomous commands
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   private static RobotContainer m_robotContainer = new RobotContainer();
-  
+
   private final PomXboxController driverController = new PomXboxController(0);
   private final PomXboxController operatorController = new PomXboxController(1);
   private final Drive drive;
   private final Shoot shoot;
   private Transfer transfer;
   private NoteIntake noteIntake;
-  
-  
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   private RobotContainer() {
-    //SmartDashboard.putData("start tune", Commands.runOnce(TuneablesManager::enable));
+    // SmartDashboard.putData("start tune",
+    // Commands.runOnce(TuneablesManager::enable));
     noteIntake = new NoteIntake(new NoteIntakeIOReal());
     drive = new Drive(new DriveIOTalonSRX(), null);
     transfer = new Transfer(new TransferIOReal());
     shoot = new Shoot();
-    
+
     configureButtonBindings();
 
     SmartDashboard.putData("Auto Mode", m_chooser);
 
-    
   }
 
   public static RobotContainer getInstance() {
@@ -94,29 +90,28 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     operatorController.rightTrigger().whileTrue(ShootingCommands.shootNote(shoot, 6));
-    operatorController.leftTrigger().whileTrue(TransferCommands.shoot(transfer).alongWith(NoteIntakeCommands.Intake(noteIntake)));
-    operatorController.a().onTrue(NoteIntakeCommands.Intake(noteIntake).
-    raceWith(TransferCommands.transfer(transfer)));
-    drive.setDefaultCommand(DriveCommands.tanckDrive(drive, driverController::getLeftY, driverController::getRightY));
-    
-    
+    operatorController.leftTrigger()
+        .whileTrue(TransferCommands.shoot(transfer).alongWith(NoteIntakeCommands.Intake(noteIntake)));
+    operatorController.a().onTrue(NoteIntakeCommands.Intake(noteIntake).raceWith(TransferCommands.transfer(transfer)));
+    drive.setDefaultCommand(DriveCommands.arcadeDrive(drive, driverController::getLeftY, driverController::getRightX));
+
     operatorController.b().onTrue(NoteIntakeCommands.stop(noteIntake));
     operatorController.x().onTrue(TransferCommands.stop(transfer));
     operatorController.y().onTrue(ShootingCommands.stop(shoot));
 
-    
-
     // andThen(TransferCommands.shoot(transfer).withTimeout(0.3)).
     // andThen(ShootingCommands.shootNote(shoot).withTimeout(0.5)));
 
-    //operatorController.x().onTrue(ShootingCommands.setSetPointCommand(shoot, 10));
+    // operatorController.x().onTrue(ShootingCommands.setSetPointCommand(shoot,
+    // 10));
 
-
-    // operatorController.rightTrigger().whileTrue(ShooterCommands.startEndShoot(shooter, ShooterConstants.SPEED));
+    // operatorController.rightTrigger().whileTrue(ShooterCommands.startEndShoot(shooter,
+    // ShooterConstants.SPEED));
     // operatorController.leftTrigger().whileTrue(TransferCommands.shoot(transfer));
-    // operatorController.a().onTrue(NoteIntakeCommands.Intake(noteIntake).alongWith(TransferCommands.transfer(transfer)).until(()-> transfer.getTransferSensor()));
+    // operatorController.a().onTrue(NoteIntakeCommands.Intake(noteIntake).alongWith(TransferCommands.transfer(transfer)).until(()->
+    // transfer.getTransferSensor()));
     // operatorController.y().onTrue(TransferCommands.stop(transfer).alongWith(NoteIntakeCommands.stop(noteIntake)));
-    //operatorController.a().onFalse(TransferCommands.reverseTransfer(transfer).withTimeout(0.25555));
+    // operatorController.a().onFalse(TransferCommands.reverseTransfer(transfer).withTimeout(0.25555));
   }
 
   /**
