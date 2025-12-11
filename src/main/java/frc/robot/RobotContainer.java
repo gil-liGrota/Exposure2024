@@ -89,11 +89,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    drive.setDefaultCommand(DriveCommands.arcadeDrive(drive, driverController::getLeftY, driverController::getRightX));
+
     operatorController.rightTrigger().whileTrue(ShootingCommands.shootNote(shoot, 6));
     operatorController.leftTrigger()
         .whileTrue(TransferCommands.shoot(transfer).alongWith(NoteIntakeCommands.Intake(noteIntake)));
     operatorController.a().onTrue(NoteIntakeCommands.Intake(noteIntake).raceWith(TransferCommands.transfer(transfer)));
-    drive.setDefaultCommand(DriveCommands.arcadeDrive(drive, driverController::getLeftY, driverController::getRightX));
 
     operatorController.b().onTrue(NoteIntakeCommands.stop(noteIntake));
     operatorController.x().onTrue(TransferCommands.stop(transfer));
